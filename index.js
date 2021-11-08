@@ -34,7 +34,8 @@ app.set('view engine', 'ejs');
 
 app.get('/', async (req, res) => {
   let wallet = 0;
-  let coins = ['SOL', 'SRM', 'LUNA', 'FTM', 'THETA', 'RAY', 'KSM', 'VET', 'LIT', 'TFUEL', 'PHA', 'COTI', 'RUNE', 'TLM'];
+  let coins = ['MANA', 'SOL', 'SRM', 'LUNA', 'FTM', 'THETA', 'RAY', 'KSM',
+    'VET', 'LIT', 'TFUEL', 'PHA', 'COTI', 'RUNE', 'TLM', 'BNB'];
   let balances;
   try {
     balances = await binance.balance();
@@ -46,15 +47,15 @@ app.get('/', async (req, res) => {
     let coinusdt = `${coin}USDT`;
     const ticker = await binance.prices(coinusdt);
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
-    money = money * ticker[coinusdt]
+    money = money * ticker[coinusdt];
     wallet = wallet + money;
-    // console.log(wallet)
   };
   wallet += (parseFloat(balances.USDT.available) + parseFloat(balances.USDT.onOrder));
+  wallet = wallet.toFixed(2);
   res.render('home', { balance: wallet, coins: coins })
 });
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 3000
 app.listen(port, () => {
   console.log(`online on port ${port}`);
 });
