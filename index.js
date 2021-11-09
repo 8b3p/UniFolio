@@ -70,9 +70,9 @@ passport.use(new localPassport(CoinUser.authenticate()));
 passport.serializeUser(CoinUser.serializeUser());
 passport.deserializeUser(CoinUser.deserializeUser());
 
-app.use( async (req, res, next) => {
+app.use(async (req, res, next) => {
   if (req.user) {
-    if (req.user.username == 'omair') {
+    if (req.user.commissionto) {
       res.locals.commissioned = await CoinUser.findById(req.user.commissionto);
     } else {
       res.locals.commissioned = null;
@@ -117,6 +117,7 @@ app.get('/home', async (req, res) => {
   };
   wallet += (parseFloat(balances.USDT.available) + parseFloat(balances.USDT.onOrder));
   wallet = wallet.toFixed(2);
+  console.info(req.user)
   res.render('home', { balance: wallet, coins: coins })
 });
 
