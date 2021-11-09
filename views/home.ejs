@@ -16,18 +16,21 @@
     <div class="container">
       <nav class="navbar  navbar-dark bg-transparent">
         <a class="navbar-brand" href="#">Finance</a>
-          <ul class="navbar-nav d-flex flex-row justify-content-between">
-            <li class="nav-item">
-              <a class="nav-link mx-2" href="/logout">Logout</a>
-            </li>
-          </ul>
+        <ul class="navbar-nav d-flex flex-row justify-content-between">
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="/logout">Logout</a>
+          </li>
+        </ul>
       </nav>
     </div>
     <div class="container d-flex justify-content-center align-items-center main">
       <main class="card">
-        <h1 class="text-center">Total balance is : <%= balance %>
+        <h1 class="text-center">Total balance is : <%= (balance * (currentUser.percentage / 100)).toFixed(2) %>$
         </h1>
-        <h4 class="text-center">coins are : <%= coins.coin.join(', ') %>, USDT </h4>
+        <p>Capital is : <%= currentUser.capital %>$</p>
+        <p>Overall profit is : <%= ((balance * (currentUser.percentage / 100)) - currentUser.capital).toFixed(2) %>$ (
+            <%= ((((balance * (currentUser.percentage / 100)) - currentUser.capital) * 100) / (currentUser.capital)).toFixed(2) %>%)</p>
+        <h4>coins are : <%= coins.coin.join(', ') %>, USDT </h4>
       </main>
     </div>
     <footer class="footer bg-transparent py-3">

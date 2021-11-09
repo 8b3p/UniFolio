@@ -124,8 +124,8 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login' })
 
 app.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = new CoinUser({ username: username });
+    const { username, password, capital, percentage } = req.body;
+    const user = new CoinUser({ username, capital, percentage});
     const registeredUser = await CoinUser.register(user, password);
     console.log(registeredUser)
     req.login(registeredUser, error => {
