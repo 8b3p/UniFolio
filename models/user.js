@@ -11,7 +11,14 @@ const UserSchema = new Schema({
     type: Number,
     required: true
   },
-  
+  profit: {
+    type: Number,
+    required: true
+  },
+  commissionto: {
+    type: Schema.Types.ObjectId,
+    ref: 'CoinsUser'
+  }
 });
 
 UserSchema.plugin(passportLocalMongoose);

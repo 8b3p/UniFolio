@@ -25,12 +25,24 @@
     </div>
     <div class="container d-flex justify-content-center align-items-center main">
       <main class="card">
-        <h1 class="text-center">Total balance is : <%= (balance * (currentUser.percentage / 100)).toFixed(2) %>$
+        <h1 class="text-center">Total balance : <%= ((balance * (currentUser.percentage / 100)) - (((balance *
+            (currentUser.percentage / 100)) - currentUser.capital) * ((100 - currentUser.profit) / 100))).toFixed(2) %>$
         </h1>
-        <p>Capital is : <%= currentUser.capital %>$</p>
-        <p>Overall profit is : <%= ((balance * (currentUser.percentage / 100)) - currentUser.capital).toFixed(2) %>$ (
-            <%= ((((balance * (currentUser.percentage / 100)) - currentUser.capital) * 100) / (currentUser.capital)).toFixed(2) %>%)</p>
-        <h4>coins are : <%= coins.coin.join(', ') %>, USDT </h4>
+        <% if (currentUser.username == 'omair') { %> 
+         <h3 class="text-center">Binance balance : <%= balance %> </h3>
+         <% } %> 
+        <p>Capital : <%= currentUser.capital %>$</p>
+        <p>Profit : <%= (((balance * (currentUser.percentage / 100)) - currentUser.capital) *
+            (currentUser.profit / 100)).toFixed(2) %>$ (
+            <%= (((((balance * (currentUser.percentage / 100)) - currentUser.capital) * (currentUser.profit / 100)) *
+              100) / (currentUser.capital)).toFixed(2) %>%)</p>
+        <p>profit percentage : <%= currentUser.profit %>%</p>
+        <% if(commissioned) { %>
+          <p>Commission profit: <%=((((balance * (commissioned.percentage / 100)) - commissioned.capital) *
+          ((100 - commissioned.profit) / 100))).toFixed(2) %>$
+          </p>
+          <% } %>
+            <h4>coins are : <%= coins.coin.join(', ') %>, USDT </h4>
       </main>
     </div>
     <footer class="footer bg-transparent py-3">
