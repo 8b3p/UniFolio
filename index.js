@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
   require('dotenv').config();
 };
+const passport = require('passport');
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
@@ -53,6 +54,10 @@ app.get('/', async (req, res) => {
   wallet += (parseFloat(balances.USDT.available) + parseFloat(balances.USDT.onOrder));
   wallet = wallet.toFixed(2);
   res.render('home', { balance: wallet, coins: coins })
+});
+
+app.post('/login', passport.authenticate('local'), (req, res) => {
+  res.redirect('/')
 });
 
 const port = process.env.PORT || 3000
