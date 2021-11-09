@@ -6,3 +6,4 @@ const CoinSchema = new Schema({
 });
 
 module.exports = mongoose.model('Coins', CoinSchema);
+

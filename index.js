@@ -3,7 +3,8 @@ if (process.env.NODE_ENV !== "production") {
 };
 const passport = require('passport');
 const localPassport = require('passport-local');
-const User = require('./models/user');
+const CoinUser = require('./models/user');
+const Coins = require('./models/coins')
 const session = require('express-session');
 const mongoStore = require('connect-mongo');
 const express = require('express');
@@ -65,15 +66,34 @@ app.use(session(sessionConfig));
 //all these are for the passport package for the password falan
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new localPassport(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(new localPassport(CoinUser.authenticate()));
+passport.serializeUser(CoinUser.serializeUser());
+passport.deserializeUser(CoinUser.deserializeUser());
 
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
+
+app.post('/uploadcoins', (req, res) => {
+  let coins = new Coins({
+    coin: ['MANA', 'SOL', 'SRM', 'LUNA', 'FTM', 'THETA', 'RAY', 'KSM',
+      'VET', 'LIT', 'TFUEL', 'PHA', 'COTI', 'RUNE', 'TLM', 'BNB']
+  });
+  coins.save();
+  res.redirect('/home');
+})
 
 app.get('/', async (req, res) => {
+  res.redirect('/login');
+});
+
+app.get('/home', async (req, res) => {
+  if(!req.isAuthenticated()){
+    return res.redirect('/login');
+  }
   let wallet = 0;
-  let coins = ['MANA', 'SOL', 'SRM', 'LUNA', 'FTM', 'THETA', 'RAY', 'KSM',
-    'VET', 'LIT', 'TFUEL', 'PHA', 'COTI', 'RUNE', 'TLM', 'BNB'];
+  let coins = await Coins.findById('618aaa7ba7ad321c82fea186')
   let balances;
   try {
     balances = await binance.balance();
@@ -81,9 +101,9 @@ app.get('/', async (req, res) => {
   } catch (err) {
     console.log(err.statusMessage, err.statusCode)
   }
-  for (let coin of coins) {
+  for (let coin of coins.coin) {
     let coinusdt = `${coin}USDT`;
-    const ticker = await binance.prices(coinusdt);
+    const ticker =  binance.prices(coinusdt);
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
     money = money * ticker[coinusdt];
     wallet = wallet + money;
@@ -93,9 +113,37 @@ app.get('/', async (req, res) => {
   res.render('home', { balance: wallet, coins: coins })
 });
 
-app.post('/login', passport.authenticate('local'), (req, res) => {
-  res.redirect('/')
+app.get('/login', (req, res) => {
+  res.render('login');
 });
+
+app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
+
+  res.redirect('/home');
+});
+
+app.post('/register', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = new CoinUser({ username: username });
+    const registeredUser = await CoinUser.register(user, password);
+    console.log(registeredUser)
+    req.login(registeredUser, error => {
+      if (error) {
+        return rres.send('error logging in');
+      } else {
+        res.send('success');
+      }
+    });
+  } catch (e) {
+    res.json('error registering probably', e);
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/login');
+})
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
