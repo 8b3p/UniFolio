@@ -16,7 +16,7 @@ const UserSchema = new Schema({
     required: true
   },
   commissionto: {
-    type: Schema.Types.ObjectId,
+    type: [Schema.Types.ObjectId],
     ref: 'CoinsUser'
   }
 });
