@@ -70,8 +70,15 @@ passport.use(new localPassport(CoinUser.authenticate()));
 passport.serializeUser(CoinUser.serializeUser());
 passport.deserializeUser(CoinUser.deserializeUser());
 
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
+app.use(async (req, res, next) => {
+  if (req.user) {
+    if (req.user.commissionto) {
+      res.locals.commissioned = await CoinUser.findById(req.user.commissionto);
+    } else {
+      res.locals.commissioned = null;
+    }
+    res.locals.currentUser = req.user;
+  }
   next();
 });
 
@@ -110,6 +117,7 @@ app.get('/home', async (req, res) => {
   };
   wallet += (parseFloat(balances.USDT.available) + parseFloat(balances.USDT.onOrder));
   wallet = wallet.toFixed(2);
+  console.info(req.user)
   res.render('home', { balance: wallet, coins: coins })
 });
 
@@ -124,8 +132,8 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login' })
 
 app.post('/register', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = new CoinUser({ username: username });
+    const { username, password, capital, percentage, profit, commissionto } = req.body;
+    const user = new CoinUser({ username, capital, percentage, profit, commissionto });
     const registeredUser = await CoinUser.register(user, password);
     console.log(registeredUser)
     req.login(registeredUser, error => {
