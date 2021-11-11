@@ -110,7 +110,7 @@ app.get('/home', async (req, res) => {
   }
   for (let coin of coins.coin) {
     let coinusdt = `${coin}USDT`;
-    const ticker =  binance.prices(coinusdt);
+    const ticker = await binance.prices(coinusdt);
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
     money = money * ticker[coinusdt];
     wallet = wallet + money;
