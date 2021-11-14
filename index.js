@@ -13,6 +13,24 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
 const Binance = require('node-binance-api');
+const rp = require('request-promise');
+const requestOptions = {
+  method: 'GET',
+  uri: 'https://www.mexc.com/open/api/v2/account/info',
+  qs: {
+    'start': '1',
+    'limit': '5000',
+    'convert': 'USD'
+  },
+  headers: {
+    'ApiKey': process.env.MEXC_ACCESS_KEY,
+    'Request-Time': 20,
+    'Signature': process.env.MEXC_SECRET,
+    'Content-Type': 'application / JSON'
+  },
+  json: true,
+  gzip: true
+};
 const binance = new Binance().options({
   APIKEY: process.env.BINANCE_APIKEY,
   APISECRET: process.env.BINANCE_APISECRET
@@ -120,6 +138,14 @@ app.get('/home', async (req, res) => {
   console.info(req.user)
   res.render('home', { balance: wallet, coins: coins })
 });
+
+app.get('/test', async (req, res) => {
+  rp(requestOptions).then(response => {
+    res.json(response)
+  }).catch((err) => {
+    console.log('API call error:', err.message);
+  });
+})
 
 app.get('/login', (req, res) => {
   res.render('login');
