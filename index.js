@@ -13,24 +13,16 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
 const Binance = require('node-binance-api');
-const rp = require('request-promise');
-const requestOptions = {
-  method: 'GET',
-  uri: 'https://www.mexc.com/open/api/v2/account/info',
-  qs: {
-    'start': '1',
-    'limit': '5000',
-    'convert': 'USD'
+const Kucoin = require('kucoin-node-sdk');
+Kucoin.init({
+  baseUrl: '',
+  apiAuth: {
+    key: process.env.KU_API_KEY, // KC-API-KEY
+    secret: process.env.KU_API_SECRET, // API-Secret
+    passphrase: process.env.KU_API_PASSPHRASE, // KC-API-PASSPHRASE
   },
-  headers: {
-    'ApiKey': process.env.MEXC_ACCESS_KEY,
-    'Request-Time': 20,
-    'Signature': process.env.MEXC_SECRET,
-    'Content-Type': 'application / JSON'
-  },
-  json: true,
-  gzip: true
-};
+  authVersion: 2, // KC-API-KEY-VERSION.
+});
 const binance = new Binance().options({
   APIKEY: process.env.BINANCE_APIKEY,
   APISECRET: process.env.BINANCE_APISECRET
@@ -120,15 +112,16 @@ app.get('/home', async (req, res) => {
   let wallet = 0;
   let coins = await Coins.findById('618aaa7ba7ad321c82fea186')
   let balances;
+  let ticker;
   try {
     balances = await binance.balance();
+    ticker = await binance.prices();
     console.log('got the balances');
   } catch (err) {
     console.log(err.statusMessage, err.statusCode)
   }
   for (let coin of coins.coin) {
     let coinusdt = `${coin}USDT`;
-    const ticker = await binance.prices(coinusdt);
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
     money = money * ticker[coinusdt];
     wallet = wallet + money;
@@ -140,11 +133,17 @@ app.get('/home', async (req, res) => {
 });
 
 app.get('/test', async (req, res) => {
-  rp(requestOptions).then(response => {
-    res.json(response)
-  }).catch((err) => {
-    console.log('API call error:', err.message);
+  Kucoin.init({
+    baseUrl: '',
+    apiAuth: {
+      key: process.env.KU_API_KEY, // KC-API-KEY
+      secret: process.env.KU_API_SECRET, // API-Secret
+      passphrase: process.env.KU_API_PASSPHRASE, // KC-API-PASSPHRASE
+    },
+    authVersion: 2, // KC-API-KEY-VERSION.
   });
+  const temp = await Kucoin.rest.Others.getTimestamp();
+  res.json(temp);
 })
 
 app.get('/login', (req, res) => {
