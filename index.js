@@ -4,15 +4,16 @@ if (process.env.NODE_ENV !== "production") {
 const passport = require('passport');
 const localPassport = require('passport-local');
 const CoinUser = require('./models/user');
-const Coins = require('./models/coins')
+const Coins = require('./models/coins');
 const session = require('express-session');
 const mongoStore = require('connect-mongo');
 const express = require('express');
 const app = express();
+const catchAsync = require('./utility/catchAsync.js');
+const controllers = require('./controller/controllers.js');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
-const Binance = require('node-binance-api');
 const Kucoin = require('kucoin-node-sdk');
 Kucoin.init({
   baseUrl: '',
@@ -22,10 +23,6 @@ Kucoin.init({
     passphrase: process.env.KU_API_PASSPHRASE, // KC-API-PASSPHRASE
   },
   authVersion: 2, // KC-API-KEY-VERSION.
-});
-const binance = new Binance().options({
-  APIKEY: process.env.BINANCE_APIKEY,
-  APISECRET: process.env.BINANCE_APISECRET
 });
 
 const mongoDbUrl = process.env.MONGO_URL;
@@ -80,7 +77,7 @@ passport.use(new localPassport(CoinUser.authenticate()));
 passport.serializeUser(CoinUser.serializeUser());
 passport.deserializeUser(CoinUser.deserializeUser());
 
-app.use(async (req, res, next) => {
+app.use(catchAsync(async (req, res, next) => {
   if (req.user) {
     if (req.user.commissionto) {
       res.locals.commissioned = await CoinUser.findById(req.user.commissionto);
@@ -90,95 +87,38 @@ app.use(async (req, res, next) => {
     res.locals.currentUser = req.user;
   }
   next();
-});
+}));
 
-app.post('/uploadcoins', (req, res) => {
-  let coins = new Coins({
-    coin: ['MANA', 'SOL', 'SRM', 'LUNA', 'FTM', 'THETA', 'RAY', 'KSM',
-      'VET', 'LIT', 'TFUEL', 'PHA', 'COTI', 'RUNE', 'TLM', 'BNB']
-  });
-  coins.save();
-  res.redirect('/home');
-})
+app.post('/uploadcoins', controllers.uploadCoins);
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
   res.redirect('/login');
 });
 
-app.get('/home', async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.redirect('/login');
-  }
-  let wallet = 0;
-  let coins = await Coins.findById('618aaa7ba7ad321c82fea186')
-  let balances;
-  let ticker;
-  try {
-    balances = await binance.balance();
-    ticker = await binance.prices();
-    console.log('got the balances');
-  } catch (err) {
-    console.log(err.statusMessage, err.statusCode)
-  }
-  for (let coin of coins.coin) {
-    let coinusdt = `${coin}USDT`;
-    let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
-    money = money * ticker[coinusdt];
-    wallet = wallet + money;
-  };
-  wallet += (parseFloat(balances.USDT.available) + parseFloat(balances.USDT.onOrder));
-  wallet = wallet.toFixed(2);
-  console.info(req.user)
-  res.render('home', { balance: wallet, coins: coins })
-});
-
-app.get('/test', async (req, res) => {
-  Kucoin.init({
-    baseUrl: '',
-    apiAuth: {
-      key: process.env.KU_API_KEY, // KC-API-KEY
-      secret: process.env.KU_API_SECRET, // API-Secret
-      passphrase: process.env.KU_API_PASSPHRASE, // KC-API-PASSPHRASE
-    },
-    authVersion: 2, // KC-API-KEY-VERSION.
-  });
-  const temp = await Kucoin.rest.Others.getTimestamp();
-  res.json(temp);
-})
+app.get('/home', catchAsync(controllers.renderHomePage));
 
 app.get('/login', (req, res) => {
   res.render('login');
 });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
-
   res.redirect('/home');
 });
 
-app.post('/register', async (req, res) => {
-  try {
-    const { username, password, capital, percentage, profit, commissionto } = req.body;
-    const user = new CoinUser({ username, capital, percentage, profit, commissionto });
-    const registeredUser = await CoinUser.register(user, password);
-    console.log(registeredUser)
-    req.login(registeredUser, error => {
-      if (error) {
-        return rres.send('error logging in');
-      } else {
-        res.send('success');
-      }
-    });
-  } catch (e) {
-    res.json('error registering probably', e);
-  }
-});
+app.post('/register', catchAsync(controllers.register));
 
 app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/login');
 })
 
-const port = process.env.PORT || 3000
+app.use((err, req, res, next) => {
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = 'oh no, something went wrong';
+  res.status(statusCode).render('error', {err});
+});
+
+const port = process.env.PORT || 8080
 app.listen(port, () => {
   console.log(`online on port ${port}`);
 });
