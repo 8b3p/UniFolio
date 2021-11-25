@@ -33,19 +33,15 @@ module.exports.getBalance = async () => {
   })
 
   for (let coin of Balance.data) {
-    if (coin.currency == 'AIOZ') {
-      continue;
-    } else {
-      for (let data of prices.data.ticker) {
-        if (data.symbol == (coin.currency + '-USDT')) {
-          let calculatedBalance = data.last * coin.balance;
-          total += parseFloat(calculatedBalance);
-          break;
-        }
-        if (data.symbol === coin.currency + '-UST') {
-          let calculatedBalance = coin.balance;
-          total += parseFloat(calculatedBalance);
-        }
+    for (let data of prices.data.ticker) {
+      if (data.symbol == (coin.currency + '-USDT')) {
+        let calculatedBalance = data.last * coin.balance;
+        total += parseFloat(calculatedBalance);
+        break;
+      }
+      if (data.symbol === coin.currency + '-UST') {
+        let calculatedBalance = coin.balance;
+        total += parseFloat(calculatedBalance);
       }
     }
   }
