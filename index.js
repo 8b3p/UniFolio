@@ -14,16 +14,6 @@ const controllers = require('./controller/controllers.js');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
-const Kucoin = require('kucoin-node-sdk');
-Kucoin.init({
-  baseUrl: '',
-  apiAuth: {
-    key: process.env.KU_API_KEY, // KC-API-KEY
-    secret: process.env.KU_API_SECRET, // API-Secret
-    passphrase: process.env.KU_API_PASSPHRASE, // KC-API-PASSPHRASE
-  },
-  authVersion: 2, // KC-API-KEY-VERSION.
-});
 
 const mongoDbUrl = process.env.MONGO_URL;
 mongoose.connect(mongoDbUrl, {
@@ -49,11 +39,10 @@ const store = mongoStore.create({
   mongoUrl: mongoDbUrl,
   secret: process.env.SECRET,
   touchAfter: 24 * 60 * 60
-})
-
+});
 store.on("error", function (e) {
   console.log('session store error', e);
-})
+});
 
 const sessionConfig = {
   store,
@@ -67,7 +56,6 @@ const sessionConfig = {
     maxAge: 1000 * 60 * 60 * 24 * 7
   }
 };
-
 app.use(session(sessionConfig));
 
 //all these are for the passport package for the password falan
@@ -89,7 +77,6 @@ app.use(catchAsync(async (req, res, next) => {
   next();
 }));
 
-app.post('/uploadcoins', controllers.uploadCoins);
 
 app.get('/', (req, res) => {
   res.redirect('/login');
@@ -115,6 +102,7 @@ app.get('/logout', (req, res) => {
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = 'oh no, something went wrong';
+  console.log(err)
   res.status(statusCode).render('error', {err});
 });
 

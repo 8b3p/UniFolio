@@ -19,7 +19,7 @@ const Headers = {
 };
 
 
-module.exports.getBalances = async () => {
+module.exports.getBalance = async () => {
   let total = 0;
   const Balance = await rp({
     method: 'GET',
@@ -34,18 +34,22 @@ module.exports.getBalances = async () => {
   })
 
   for (let coin of Balance.data) {
-    for (let data of prices.data.ticker) {
-      if (data.symbol == (coin.currency + '-USDT')) {
-        let calculatedBalance = data.last * coin.balance;
-        total += parseFloat(calculatedBalance);
-        break;
-      }
-      if (data.symbol === coin.currency + '-UST') {
-        let calculatedBalance = coin.balance;
-        total += parseFloat(calculatedBalance);
+    if (coin.currency == 'AIOZ') {
+      continue;
+    } else {
+      for (let data of prices.data.ticker) {
+        if (data.symbol == (coin.currency + '-USDT')) {
+          let calculatedBalance = data.last * coin.balance;
+          total += parseFloat(calculatedBalance);
+          break;
+        }
+        if (data.symbol === coin.currency + '-UST') {
+          let calculatedBalance = coin.balance;
+          total += parseFloat(calculatedBalance);
+        }
       }
     }
   }
-  console.log('got Kucoin balance')
+  console.log('got Kucoin balance: ' + total)
   return total;
 };
