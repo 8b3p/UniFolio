@@ -25,4 +25,4 @@ module.exports.getBalance = async (coins) => {
   };
   console.log('got binance balance: ' + total);
   return total;
-}
+};
