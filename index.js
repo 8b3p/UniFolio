@@ -84,6 +84,7 @@ app.get('/', (req, res) => {
 
 app.get('/home', catchAsync(controllers.renderHomePage));
 
+
 app.get('/login', (req, res) => {
   res.render('login');
 });
