@@ -31,7 +31,7 @@
               currentUser.capital) * ((100 - currentUser.profit) / 100))).toFixed(2) %>$ : الرصيد الكلي
           </h1>
           <% if (currentUser.username=='omair' ) { %>
-            <h3 class="text-center">Binance balance : <%= balance %>
+            <h3 class="text-center"><%= balance %> : جميع الحسابات
             </h3>
             <% } %>
               <p class="text-end">
@@ -44,12 +44,12 @@
                     100)) * 100) / (currentUser.capital)).toFixed(2) %>%) : الربح
               </p>
               <% if(commissioned) { %>
-                <p>Commission profit: <%=((((balance * (commissioned.percentage / 100)) - commissioned.capital) * ((100
-                    - commissioned.profit) / 100))).toFixed(2) %>$
+                <p><%=((((balance * (commissioned.percentage / 100)) - commissioned.capital) * ((100
+                    - commissioned.profit) / 100))).toFixed(2) %>$ : ربح العمولة
                 </p>
-                <p>Overall : <%= ((((balance * (currentUser.percentage / 100)) - currentUser.capital) *
+                <p><%= ((((balance * (currentUser.percentage / 100)) - currentUser.capital) *
                     (currentUser.profit / 100)) + ((((balance * (commissioned.percentage / 100)) - commissioned.capital)
-                    * ((100 - commissioned.profit) / 100)))).toFixed(2) %>$</p>
+                    * ((100 - commissioned.profit) / 100)))).toFixed(2) %>$ : اجمالي الربح</p>
                 <% } %>
         </main>
       </div>
