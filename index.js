@@ -67,11 +67,10 @@ passport.deserializeUser(CoinUser.deserializeUser());
 
 app.use(catchAsync(async (req, res, next) => {
   if (req.user) {
-    if (req.user.commissionto) {
-      res.locals.commissioned = [];
-      for (let i = 0; i < req.user.commissionto.length; i++) {
-        res.locals.commissioned.push(await CoinUser.findById(req.user.commissionto[i]))
-      }
+    if (req.user.commissionto.length) {
+      res.locals.commissioned = await CoinUser.find({
+        '_id': req.user.commissionto
+      });
     } else {
       res.locals.commissioned = null;
     }
