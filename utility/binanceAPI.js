@@ -23,6 +23,14 @@ module.exports.getBalance = async (coins) => {
       total += money;
     }
   };
+  {
+    let coin = 'USDT';
+    let coinusdt = `${coin}DAI`;
+    let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
+    money = money * ticker[coinusdt];
+    console.log(`${coin}: ${money}`);
+    total = total + money;
+  }
   console.log('got binance balance: ' + total);
   return total;
 };

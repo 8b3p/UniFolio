@@ -68,7 +68,10 @@ passport.deserializeUser(CoinUser.deserializeUser());
 app.use(catchAsync(async (req, res, next) => {
   if (req.user) {
     if (req.user.commissionto) {
-      res.locals.commissioned = await CoinUser.findById(req.user.commissionto);
+      res.locals.commissioned = [];
+      for (let i = 0; i < req.user.commissionto.length; i++) {
+        res.locals.commissioned.push(await CoinUser.findById(req.user.commissionto[i]))
+      }
     } else {
       res.locals.commissioned = null;
     }
@@ -104,7 +107,7 @@ app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = 'oh no, something went wrong';
   console.log(err)
-  res.status(statusCode).render('error', {err});
+  res.status(statusCode).render('error', { err });
 });
 
 const port = process.env.PORT || 8080
