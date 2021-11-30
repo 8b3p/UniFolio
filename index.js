@@ -69,18 +69,9 @@ app.use(catchAsync(async (req, res, next) => {
   if (req.user) {
     if (req.user.commissionto) {
       res.locals.commissioned = [];
-<<<<<<< HEAD
       for (let i = 0; i < req.user.commissionto.length; i++) {
         res.locals.commissioned.push(await CoinUser.findById(req.user.commissionto[i]))
       }
-=======
-      for(let i = 0; i < req.user.commissionto.length; i++) {
-        let temp = await CoinUser.findById(req.user.commissionto[i])
-        res.locals.commissioned.push(temp)
-        console.log(temp)
-      }
-      console.log(res.locals.commissioned)
->>>>>>> 55edd107ebec8d3ad540d477011fdc991e5d9779
     } else {
       res.locals.commissioned = null;
     }

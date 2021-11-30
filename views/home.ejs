@@ -32,10 +32,6 @@
               <%  for(let i = 0; i < commissioned.length; i++) {
                     let result = parseFloat(((((balance * (commissioned[i].percentage / 100)) - commissioned[i].capital) * ((100 -
                     commissioned[i].profit) / 100))))
-<<<<<<< HEAD
-=======
-                    console.log(result.toFixed(2))
->>>>>>> 55edd107ebec8d3ad540d477011fdc991e5d9779
                     total = total + result
                   } %> 
               <%= (((balance * (currentUser.percentage / 100)) - (((balance * (currentUser.percentage / 100)) -
@@ -65,10 +61,6 @@
                   <% for(let i = 0; i < commissioned.length; i++) {
                     let result = parseFloat(((((balance * (commissioned[i].percentage / 100)) - commissioned[i].capital) * ((100 -
                     commissioned[i].profit) / 100))))
-<<<<<<< HEAD
-=======
-                    console.log(result.toFixed(2))
->>>>>>> 55edd107ebec8d3ad540d477011fdc991e5d9779
                     total = total + result
                      } %> 
                     <%= total.toFixed(2) %> $ : ربح العمولة
