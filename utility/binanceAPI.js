@@ -7,9 +7,10 @@ const binance = new Binance().options({
 
 module.exports.getBalance = async (coins) => {
   let total = 0;
-  const stakedCoins = await StakedCoins.findOne();
-  const balances = await binance.balance();
-  const ticker = await binance.prices();
+  const data = await Promise.all([StakedCoins.findOne(), binance.balance(), binance.prices()])
+  const stakedCoins = data[0];
+  const balances = data[1];
+  const ticker = data[2];
   for (let coin of coins.coin) {
     let coinusdt = `${coin}USDT`;
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));

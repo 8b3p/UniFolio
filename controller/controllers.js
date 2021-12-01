@@ -2,6 +2,7 @@ const Coins = require('../models/coins');
 const CoinUser = require('../models/user');
 const Kucoin = require('../utility/KucoinAPI');
 const Binance = require('../utility/binanceAPI');
+const Coingecko = require('../utility/coingecko');
 
 
 module.exports.renderHomePage = async (req, res) => {
@@ -13,7 +14,7 @@ module.exports.renderHomePage = async (req, res) => {
   // KucoinBalance = await Kucoin.getBalance();
   //*Promise.all([]) takes promises and calles them at once, it stops if only one was rejected
   //! Promise.allSettled([]) while this one return each promise as it is, if one gets rejected, it doesn't cancel the rest
-  const balanceArray = await Promise.all([Kucoin.getBalance(), Binance.getBalance(coins)])
+  const balanceArray = await Promise.all([Kucoin.getBalance(), Binance.getBalance(coins), Coingecko.getBalance()])
   let balance = 0;
   for (let i = 0; i < balanceArray.length; i++) {
     balance += balanceArray[i]
@@ -35,3 +36,8 @@ module.exports.register = async (req, res) => {
     }
   });
 };
+
+module.exports.test = async (req, res) => {
+  const data = await Coingecko.getBalance();
+  res.json(data);
+}

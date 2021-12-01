@@ -20,17 +20,20 @@ module.exports.getBalance = async () => {
     "KC-API-KEY-VERSION": "2"
   };
   let total = 0;
-  const Balance = await rp({
+  const balanceRP = {
     method: 'GET',
     uri: url + BalanceEndPoint,
     headers: Headers,
     json: true
-  })
-  const prices = await rp({
+  }
+  const marketRP = {
     method: 'GET',
     uri: url + MarketEndPoint,
     json: true
-  })
+  }
+  const data = await Promise.all([rp(balanceRP), rp(marketRP)]);
+  const Balance = data[0];
+  const prices = data[1];
 
   for (let coin of Balance.data) {
     for (let data of prices.data.ticker) {

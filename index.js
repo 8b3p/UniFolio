@@ -102,6 +102,8 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 })
 
+app.get('/test', catchAsync(controllers.test));
+
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = 'oh no, something went wrong';
