@@ -33,7 +33,7 @@
                     let result = parseFloat(((((balance * (commissioned[i].percentage / 100)) - commissioned[i].capital) * ((100 -
                     commissioned[i].profit) / 100))))
                     total = total + result
-                  } %> 
+                  } %>
               <%= (((balance * (currentUser.percentage / 100)) - (((balance * (currentUser.percentage / 100)) -
                 currentUser.capital) * ((100 - currentUser.profit) / 100)) + total)).toFixed(2) %>$ : الرصيد الكلي
                 <% } else { %>

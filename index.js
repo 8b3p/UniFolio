@@ -4,7 +4,6 @@ if (process.env.NODE_ENV !== "production") {
 const passport = require('passport');
 const localPassport = require('passport-local');
 const CoinUser = require('./models/user');
-const Coins = require('./models/coins');
 const session = require('express-session');
 const mongoStore = require('connect-mongo');
 const express = require('express');
