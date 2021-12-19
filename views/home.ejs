@@ -58,20 +58,16 @@
     <div class="spacer layer1"></div>
     <div style="min-height: 100%;" class="darayya container-fluid d-flex flex-column justify-content-between">
       <div class="container d-flex justify-content-center align-items-center my-auto">
-        <section class="card w-50">
-          <div class="row w-100 mx-auto mb-3">
-            <span class="col-6 text-center">إسم العملة</span>
-            <span class="col-6 text-center">رصيد العملة</span>
-          </div>
+        <section class="card">
           <div class="row w-75 mx-auto">
-          </div>
+            <span class="col-6 text-center">إسم العملة</span>
+            <span class="col-6 text-center mb-3">رصيد العملة</span>
           <% for(let obj of coinsArray) { %>
-            <div class="row w-75 mx-auto">
               <span class="col-5 text-center"><%= `${obj['coinName']}` %></span>
               <span class="col-2 text-center">:</span>
               <span class="col-5 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
-             </div> 
-            <% } %> 
+              <% } %> 
+            </div> 
         </section>
       </div>
       <div class="spacer layer2"></div>
