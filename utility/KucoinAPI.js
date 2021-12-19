@@ -7,7 +7,7 @@ const url = 'https://api.kucoin.com';
 const MarketEndPoint = '/api/v1/market/allTickers';
 const BalanceEndPoint = '/api/v1/accounts';
 
-module.exports.getBalance = async () => {
+module.exports.getBalance = async (coinsArray) => {
   const now = Date.now();
   const str_to_sign = now.toString() + 'GET' + BalanceEndPoint;
   const signature = hash.HmacSHA256(str_to_sign.toString(hash.enc.Utf8), apiSecret.toString(hash.enc.Utf8)).toString(hash.enc.Base64);
@@ -39,6 +39,10 @@ module.exports.getBalance = async () => {
     for (let data of prices.data.ticker) {
       if (data.symbol == (coin.currency + '-USDT')) {
         let calculatedBalance = data.last * coin.balance;
+        coinsArray.push({
+          coinName: coin.currency,
+          coinBalance: calculatedBalance
+        })
         total += parseFloat(calculatedBalance);
         break;
       }
@@ -48,6 +52,7 @@ module.exports.getBalance = async () => {
       }
     }
   }
-  console.log('got Kucoin balance: ' + total)
-  return total;
+  // console.log('got Kucoin balance: ' + total)
+  // console.log(coinsArray)
+  return [total, coinsArray];
 };

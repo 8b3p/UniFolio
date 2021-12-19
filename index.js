@@ -13,7 +13,7 @@ const controllers = require('./controller/controllers.js');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
-const { isLoggedIn } = require('./utility/isLoggedIn');
+const { isLoggedIn } = require('./utility/functions');
 
 const mongoDbUrl = process.env.MONGO_URL;
 mongoose.connect(mongoDbUrl, {
