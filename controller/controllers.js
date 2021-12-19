@@ -3,7 +3,7 @@ const CoinUser = require('../models/user');
 const Kucoin = require('../utility/KucoinAPI');
 const Binance = require('../utility/binanceAPI');
 const Coingecko = require('../utility/coingecko');
-
+const userCalcs = require('../utility/userCalcs');
 
 module.exports.renderHomePage = async (req, res) => {
   if (!req.isAuthenticated()) {
@@ -20,7 +20,8 @@ module.exports.renderHomePage = async (req, res) => {
     balance += balanceArray[i]
   }
   balance = balance.toFixed(2);
-  res.render('home', { balance: balance, coins: coins })
+  console.log(req.user);
+  res.render('home', { balance: balance, coins: coins, userCalcs })
 };
 
 module.exports.register = async (req, res) => {

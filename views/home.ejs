@@ -13,10 +13,10 @@
 
 <body>
   <div class="wrapper">
-    <div class="container-fluid h-75 d-flex flex-column justify-content-between">
+    <div style="min-height: 75%;" class="container-fluid d-flex flex-column justify-content-between">
       <div class="container">
         <nav class="navbar  navbar-dark bg-transparent">
-          <a class="navbar-brand" href="#">Finance</a>
+          <a class="navbar-brand" href="/">Finance</a>
           <ul class="navbar-nav d-flex flex-row justify-content-between">
             <li class="nav-item">
               <a class="nav-link mx-2" href="/logout">تسجيل الخروج</a>
@@ -27,22 +27,14 @@
       <div class="container d-flex justify-content-center align-items-center my-auto">
         <main class="card">
           <h1 class="text-end">
-            <% if(commissioned) {
-              let total = 0 %>
-              <%  for(let i = 0; i < commissioned.length; i++) {
-                    let result = parseFloat(((((balance * (commissioned[i].percentage / 100)) - commissioned[i].capital) * ((100 -
-                    commissioned[i].profit) / 100))))
-                    total = total + result
-                  } %>
-              <%= (((balance * (currentUser.percentage / 100)) - (((balance * (currentUser.percentage / 100)) -
-                currentUser.capital) * ((100 - currentUser.profit) / 100)) + total)).toFixed(2) %>$ : الرصيد الكلي
+            <% if(commissioned) { %>
+              <%= userCalcs.commissionedTotalBalance(balance, currentUser, commissioned) %>$ : الرصيد الكلي
                 <% } else { %>
-                  <%= ((balance * (currentUser.percentage / 100)) - (((balance * (currentUser.percentage / 100)) -
-                    currentUser.capital) * ((100 - currentUser.profit) / 100))).toFixed(2) %>$ : الرصيد الكلي
+                  <%= userCalcs.totalBalance(balance, currentUser) %>$ : الرصيد الكلي
                     <% } %>
           </h1>
           <% if (currentUser.username=='omair' ) { %>
-            <h3 class="text-center">
+            <h3 class="text-end">
               <%= balance %> : جميع الحسابات
             </h3>
             <% } %>
@@ -50,31 +42,21 @@
                 <%= currentUser.capital %>$ : رأس المال
               </p>
               <p class="text-end">
-                <%= (((balance * (currentUser.percentage / 100)) - currentUser.capital) * (currentUser.profit /
-                  100)).toFixed(2) %>$ (
-                  <%= (((((balance * (currentUser.percentage / 100)) - currentUser.capital) * (currentUser.profit /
-                    100)) * 100) / (currentUser.capital)).toFixed(2) %>%) : الربح
+                <%= userCalcs.profit(balance, currentUser) %> : الربح
               </p>
-              <%if(commissioned) { 
-                  let total = 0%>
+              <%if(commissioned) { %>
                 <p class="text-end">
-                  <% for(let i = 0; i < commissioned.length; i++) {
-                    let result = parseFloat(((((balance * (commissioned[i].percentage / 100)) - commissioned[i].capital) * ((100 -
-                    commissioned[i].profit) / 100))))
-                    total = total + result
-                     } %> 
-                    <%= total.toFixed(2) %> $ : ربح العمولة
+                  <%= userCalcs.commissionProfit(balance, commissioned) %> : ربح العمولة
                 </p>
                 <p class="text-end">
-                  <%= ((((balance * (currentUser.percentage / 100)) - currentUser.capital) * (currentUser.profit / 100))
-                    + total).toFixed(2) %>$ : اجمالي الربح
+                  <%= userCalcs.overallProfit(balance, currentUser, commissioned) %> : اجمالي الربح
                 </p>
                 <% } %>
         </main>
       </div>
     </div>
     <div class="spacer layer1"></div>
-    <div class="darayya container-fluid h-100 d-flex flex-column justify-content-between">
+    <div style="min-height: 100%;" class="darayya container-fluid d-flex flex-column justify-content-between">
       <div class="container d-flex justify-content-center align-items-center my-auto">
         <section class="card">
           <h1>this is for additional information</h1>

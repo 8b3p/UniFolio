@@ -13,6 +13,7 @@ const controllers = require('./controller/controllers.js');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
+const { isLoggedIn } = require('./utility/isLoggedIn');
 
 const mongoDbUrl = process.env.MONGO_URL;
 mongoose.connect(mongoDbUrl, {
@@ -78,12 +79,7 @@ app.use(catchAsync(async (req, res, next) => {
   next();
 }));
 
-
-app.get('/', (req, res) => {
-  res.redirect('/login');
-});
-
-app.get('/home', catchAsync(controllers.renderHomePage));
+app.get('/', isLoggedIn, catchAsync(controllers.renderHomePage));
 
 
 app.get('/login', (req, res) => {
@@ -91,7 +87,7 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('/home');
+  res.redirect('/');
 });
 
 app.post('/register', catchAsync(controllers.register));
