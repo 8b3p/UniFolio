@@ -63,20 +63,22 @@
       <div class="container d-flex justify-content-center align-items-center my-auto">
         <section class="card px-0">
           <div class="row w-75 px-0 mx-auto">
-            <span class="col-4 text-center">إسم العملة</span>
-            <span class="col-4 text-center">سعر العملة</span>
-            <span class="col-4 text-center mb-3">رصيد العملة</span>
+            <span class="col-4 my-4 text-center">إسم العملة</span>
+            <span class="col-4 my-4 text-center">سعر العملة</span>
+            <span class="col-4 my-4 text-center mb-3">رصيد العملة</span>
             <% if(currentUser.username != 'omair') { %> 
           <% for(let obj of coinsArray) { %>
-              <span class="col-4 text-center"><%= `${obj['coinName']}` %></span>
-              <span class="col-4 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(2)}$` %></span>
-              <span class="col-4 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
+            <span class="col-4 my-2 text-center"><%= `${obj['coinName']}` %></span>
+            <span class="col-4 my-2 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(2)}$` %></span>
+            <span class="col-4 my-2 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
+            <hr>
               <% } %> 
               <% } else { %>
                 <% for(let obj of coinsArray) { %>
-              <span class="col-4 px-0 text-center"><%= `${obj['coinName']}` %></span>
-              <span class="col-4 px-0 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(3)}$` %></span>
-              <span class="col-4 px-0 text-center"><%= `${(obj['coinBalance']).toFixed(2)}$` %></span>
+                  <hr>
+                  <span class="col-4 px-0 mb-3 text-center"><%= `${obj['coinName']}` %></span>
+                  <span class="col-4 px-0 mb-3 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(3)}$` %></span>
+                  <span class="col-4 px-0 mb-3 text-center"><%= `${(obj['coinBalance']).toFixed(2)}$` %></span>
               <% } %> 
               <% } %> 
             </div> 
