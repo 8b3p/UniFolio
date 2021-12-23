@@ -18,7 +18,8 @@ module.exports.getBalance = async (coins, coinsArray) => {
     total = total + money;
     let coinData = {
       coinName: coin,
-      coinBalance: money
+      coinBalance: money,
+      coinPrice: ticker[coinusdt]
     };
     coinsArray.push(coinData);
   };
@@ -29,6 +30,12 @@ module.exports.getBalance = async (coins, coinsArray) => {
     money = money * ticker[coinusdt];
     // console.log(`${coin}: ${money}`);
     total = total + money;
+    let coinData = {
+      coinName: coin,
+      coinBalance: money,
+      coinPrice: ticker[coinusdt]
+    };
+    coinsArray.push(coinData);
   }
   // console.log('got binance balance: ' + total);
   return [total, coinsArray];

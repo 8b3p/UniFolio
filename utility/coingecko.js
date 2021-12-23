@@ -11,7 +11,8 @@ module.exports.getBalance = async (coinsArray) => {
   const balance = parseFloat(Coins.coins.get('AKT')) * price;
   coinsArray.push({
     coinName: 'AKT',
-    coinBalance: balance
+    coinBalance: balance,
+    coinPrice: price
   })
   return [balance, coinsArray];
 };

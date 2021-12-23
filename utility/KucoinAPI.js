@@ -41,7 +41,8 @@ module.exports.getBalance = async (coinsArray) => {
         let calculatedBalance = data.last * coin.balance;
         coinsArray.push({
           coinName: coin.currency,
-          coinBalance: calculatedBalance
+          coinBalance: calculatedBalance,
+          coinPrice: data.last
         })
         total += parseFloat(calculatedBalance);
         break;
