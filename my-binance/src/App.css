@@ -1,0 +1,28 @@
+body {
+
+  overflow-x: hidden;
+}
+
+.App {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: #36011c;
+}
+
+.spacer {
+  aspect-ratio: 1920/150;
+  width: 100%;
+  height: 17vh;
+  transform: scale(1.1);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.layer1 {
+  background-image: url('./components/SVGs/first.svg');
+}
+
+.layer2 {
+  background-image: url('./components/SVGs/second.svg');
+}
