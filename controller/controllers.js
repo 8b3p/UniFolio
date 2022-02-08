@@ -19,9 +19,10 @@ module.exports.renderHomePage = async (req, res) => {
   for (let i = 0; i < balanceArray.length; i++) {
     balance += balanceArray[i][0]
   }
-  // console.log(balance)
   balance = balance.toFixed(2);
-  res.render('home', { balance, coins, userCalcs, coinsArray })
+  
+  //TODO i have to send the currentUser;;
+  res.json({ balance, coins, coinsArray})
 };
 
 module.exports.register = async (req, res) => {

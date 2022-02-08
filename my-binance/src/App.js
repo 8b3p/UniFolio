@@ -9,9 +9,9 @@ function App() {
   return (
     <div className='App'>
       <Main />
-      <div class="spacer layer1"></div>
+      <div className="spacer layer1"></div>
       <Details>
-        <div class="spacer layer2"></div>
+        <div className="spacer layer2"></div>
       </Details>
       <Footer />
     </div>
