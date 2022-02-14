@@ -24,9 +24,9 @@ const MainContent = (props) => {
 
   return (
     <Container className="d-flex flex-column justify-content-center align-items-center my-auto">
-      <main className="card">
+      <main onClick={fetchData} className="card clickable">
         {/* <h1 onClick={fetchData} className="text-end">{userCalcs.commissionedTotalBalance(data.balance, data.currentUser, data.commissioned)} : الرصيد الكلي</h1> */}
-        <h3 onClick={fetchData} className="text-end">{data.balance}: جميع الحسابات</h3>
+        <h3 className="text-end">{data.balance}: جميع الحسابات</h3>
         {/* <p className="text-end">{data.currentUser.capital}$: رأس المال</p>
         <p className="text-end">{userCalcs.profit(data.balance, data.currentUser)}: الربح</p>
         <p className="text-end">{userCalcs.commissionProfit(data.balance, data.commissioned)}: ربح العمولة</p>

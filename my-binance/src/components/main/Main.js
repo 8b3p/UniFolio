@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../navbar/Navbar';
-import MainContent from '../MainContent/MainContent';
+import MainContent from '../mainContent/MainContent';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Main.css';
 import { Container } from 'react-bootstrap';
