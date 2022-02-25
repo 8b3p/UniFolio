@@ -68,10 +68,10 @@
             <span class="col-4 my-4 text-center mb-3">رصيد العملة</span>
           <% if(currentUser.username != 'omair') { %> 
             <% for(let obj of coinsArray) { %>
-              <hr class="w-75">
-              <span class="col-4 my-2 text-center"><%= `${obj['coinName']}` %></span>
-              <span class="col-4 my-2 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(2)}$` %></span>
-              <span class="col-4 my-2 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
+              <hr style="width: 90%;" class="mx-auto">
+              <span class="col-4 px-0 mb-3 text-center"><%= `${obj['coinName']}` %></span>
+              <span class="col-4 px-0 mb-3 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(3)}$` %></span>
+              <span class="col-4 px-0 mb-3 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
             <% } %> 
           <% } else { %>
             <% for(let obj of coinsArray) { %>
