@@ -4,7 +4,7 @@ const pricesContext = React.createContext({
   balance: Number,
   coins: [],
   coinsArray: [{
-    coinsName: String,
+    coinName: String,
     coinBalance: String,
     coinPrice: Number
   }],

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MainContent.css';
-import pricesContext from '../../store/prices-date';
+import pricesContext from '../../../store/prices-date';
 // import userCalcs from '../../utility/userCalcs';
 
 const MainContent = (props) => {
