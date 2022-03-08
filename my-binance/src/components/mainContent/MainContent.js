@@ -1,32 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MainContent.css';
-import userCalcs from '../../utility/userCalcs';
+import pricesContext from '../../store/prices-date';
+// import userCalcs from '../../utility/userCalcs';
 
 const MainContent = (props) => {
-  const [data, setData] = useState('');
-  const fetchData = () => {
-    console.log('called');
-    fetch('http://localhost:3001/').then(response => {
-      return response.json();
-    }).then(response => {
-      setData(response);
-      console.log(response)
-      return response;
-    }).catch(e => {
-      return e;
-    })
-  }
-  useEffect(() => {
-    fetchData();
-  }, [])
+  const pricesCtx = useContext(pricesContext);
 
   return (
     <Container className="d-flex flex-column justify-content-center align-items-center my-auto">
-      <main onClick={fetchData} className="card clickable">
+      <main onClick={pricesCtx.fetchData} className="card clickable">
         {/* <h1 onClick={fetchData} className="text-end">{userCalcs.commissionedTotalBalance(data.balance, data.currentUser, data.commissioned)} : الرصيد الكلي</h1> */}
-        <h3 className="text-end">{data.balance}: جميع الحسابات</h3>
+        <h3 className="text-end">{pricesCtx.balance}: جميع الحسابات</h3>
         {/* <p className="text-end">{data.currentUser.capital}$: رأس المال</p>
         <p className="text-end">{userCalcs.profit(data.balance, data.currentUser)}: الربح</p>
         <p className="text-end">{userCalcs.commissionProfit(data.balance, data.commissioned)}: ربح العمولة</p>
