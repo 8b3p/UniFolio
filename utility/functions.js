@@ -1,7 +1,6 @@
 module.exports.isLoggedIn = function (req, res, next) {
   if (!req.isAuthenticated()) {
     req.session.returnTo = req.originalUrl;
-    console.log(req.session);
     return res.redirect('/login');
   };
   next();
@@ -23,7 +22,7 @@ module.exports.fixCoinsArray = (objectArray) => {
   }
   for (let i = 0; i < objectArray.length; i++) {
     for (let j = 0; j < objectArray.length; j++) {
-      if(objectArray[i]['coinBalance'] > objectArray[j]['coinBalance']){
+      if (objectArray[i]['coinBalance'] > objectArray[j]['coinBalance']) {
         let temp = objectArray[i];
         objectArray[i] = objectArray[j];
         objectArray[j] = temp;
