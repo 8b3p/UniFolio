@@ -38,8 +38,3 @@ module.exports.register = async (req, res) => {
     }
   });
 };
-
-module.exports.test = async (req, res) => {
-  const data = await Coingecko.getBalance();
-  res.json(data);
-}

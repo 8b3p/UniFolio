@@ -32,27 +32,32 @@ module.exports.getBalance = async (coinsArray) => {
     json: true
   }
   const data = await Promise.all([rp(balanceRP), rp(marketRP)]);
-  const Balance = data[0];
+  const allBalances = data[0];
   const prices = data[1];
 
-  for (let coin of Balance.data) {
-    for (let data of prices.data.ticker) {
-      if (data.symbol == (coin.currency + '-USDT')) {
-        let calculatedBalance = data.last * coin.balance;
+  for (let coin of allBalances.data) {
+    for (let coinsPrices of prices.data.ticker) {
+      if (coinsPrices.symbol === (coin.currency + '-USDT')) {
+        let calculatedBalance = coinsPrices.last * coin.balance;
         coinsArray.push({
           coinName: coin.currency,
           coinBalance: calculatedBalance,
-          coinPrice: data.last
+          coinPrice: coinsPrices.last
         })
         total += parseFloat(calculatedBalance);
         break;
       }
-      if (data.symbol === coin.currency + '-UST') {
-        let calculatedBalance = coin.balance;
+      if (coinsPrices.symbol === coin.currency + '-UST') {
+        let calculatedBalance = coinsPrices.last * coin.balance;
+        coinsArray.push({
+          coinName: coin.currency,
+          coinBalance: calculatedBalance,
+          coinPrice: coinsPrices.last
+        })
         total += parseFloat(calculatedBalance);
-      }
-    }
-  }
+      };
+    };
+  };
   // console.log('got Kucoin balance: ' + total)
   // console.log(coinsArray)
   return [total, coinsArray];

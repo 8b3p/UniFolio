@@ -13,7 +13,6 @@ const controllers = require('./controller/controllers.js');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
-const { isLoggedIn } = require('./utility/functions');
 
 const mongoDbUrl = process.env.MONGO_URL;
 mongoose.connect(mongoDbUrl, {
@@ -40,13 +39,13 @@ const store = mongoStore.create({
   secret: process.env.SECRET,
   touchAfter: 24 * 60 * 60
 });
-store.on("error", function (e) {
+store.on("error", (e) => {
   console.log('session store error', e);
 });
 
 const sessionConfig = {
   store,
-  name: 'thisIsNotTheSessionSid',
+  name: 'thisIsNotTheSessionID',
   secret: process.env.SECRET || 'mySecret',
   resave: false,
   saveUninitialized: true,
@@ -101,9 +100,7 @@ app.post('/register', catchAsync(controllers.register));
 app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/login');
-})
-
-app.get('/test', catchAsync(controllers.test));
+});
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;

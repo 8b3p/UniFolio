@@ -12,7 +12,6 @@ const pricesContext = React.createContext({
 })
 
 export const PricesContextProvider = props => {
-
   const [data, setData] = useState('');
   const fetchData = () => {
     console.log('called');
@@ -23,9 +22,11 @@ export const PricesContextProvider = props => {
       console.log(response)
       return response;
     }).catch(e => {
+      console.log(e);
       return e;
     })
   };
+
   useEffect(() => {
     fetchData();
   }, [])

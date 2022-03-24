@@ -3,6 +3,7 @@ const passportLocalMongoose = require('passport-local-mongoose')
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+  //*username and password are added from passport so no need to add them here by me (:
   capital: {
     type: Number,
     required: true
