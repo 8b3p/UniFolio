@@ -67,10 +67,10 @@ passport.deserializeUser(CoinUser.deserializeUser());
 
 app.use(function (req, res, next) {
   console.log(req.hostname)
-  for(let x = 0; x < 100; x++) {
+  for (let x = 0; x < 100; x++) {
     console.log('\n')
   }
-  res.header("Access-Control-Allow-Origin", "https://us.flow.microsoft.com/");
+  res.header("Access-Control-Allow-Origin", "https://us.flow.microsoft.com/", "prod-190.westus.logic.azure.com");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -102,11 +102,11 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login' })
 
 app.post('/api/login', (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if(err) throw err;
-    if(!user) res.send('no user found')
+    if (err) throw err;
+    if (!user) res.send('no user found')
     else {
       req.login(user, (err) => {
-        if(err) throw err;
+        if (err) throw err;
         else {
           res.sendStatus(200);
         }
