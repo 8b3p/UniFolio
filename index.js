@@ -66,7 +66,7 @@ passport.serializeUser(CoinUser.serializeUser());
 passport.deserializeUser(CoinUser.deserializeUser());
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://make.powerapps.com");
+  res.header("Access-Control-Allow-Origin", "https://us.flow.microsoft.com");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
