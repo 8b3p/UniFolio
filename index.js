@@ -70,7 +70,7 @@ app.use(function (req, res, next) {
   for (let x = 0; x < 100; x++) {
     console.log('\n')
   }
-  res.header("Access-Control-Allow-Origin", "https://us.flow.microsoft.com/", "prod-190.westus.logic.azure.com");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
