@@ -66,6 +66,9 @@ passport.serializeUser(CoinUser.serializeUser());
 passport.deserializeUser(CoinUser.deserializeUser());
 
 app.use(function (req, res, next) {
+  console.log(req)
+  console.log(req.url)
+  console.log(req.baseUrl)
   res.header("Access-Control-Allow-Origin", "https://us.flow.microsoft.com");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
