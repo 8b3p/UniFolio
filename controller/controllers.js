@@ -12,7 +12,7 @@ module.exports.renderHomePage = async (req, res) => {
   // BinanceBalance = await Binance.getBalance(coins);
   // KucoinBalance = await Kucoin.getBalance();
   //*Promise.all([]) takes promises and calles them at once, it stops if only one was rejected
-  //! Promise.allSettled([]) while this one return each promise as it is, if one gets rejected, it doesn't cancel the rest
+  //!Promise.allSettled([]) while this one return each promise as it is, if one gets rejected, it doesn't cancel the rest
   const balanceArray = await Promise.all([Kucoin.getBalance(coinsArray), Binance.getBalance(coins, coinsArray), Coingecko.getBalance(coinsArray)])
   coinsArray = fixCoinsArray(coinsArray);
   let balance = 0;
