@@ -67,7 +67,7 @@ passport.deserializeUser(CoinUser.deserializeUser());
 
 app.use(function (req, res, next) {
   console.log(req.url)
-  console.log(req.baseUrl)
+  console.log(req.originalUrl)
   for(let x = 0; x < 100; x++) {
     console.log('\n')
   }
