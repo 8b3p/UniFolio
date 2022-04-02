@@ -95,6 +95,23 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login' })
   res.redirect('/');
 });
 
+app.post('/api/login', (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if(err) throw err;
+    if(!user) res.send('no user found')
+    else {
+      req.login(user, (err) => {
+        if(err) throw err;
+        else {
+          res.sendStatus(200);
+        }
+      })
+    }
+  })(req, res, next);
+})
+
+app.get('/api', catchAsync(controllers.API));
+
 app.post('/register', catchAsync(controllers.register));
 
 app.get('/logout', (req, res) => {
