@@ -92,11 +92,11 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/login' })
 
 app.post('/api/login', (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if(err) throw err;
-    if(!user) res.send('no user found')
+    if (err) throw err;
+    if (!user) res.send('no user found')
     else {
       req.login(user, (err) => {
-        if(err) throw err;
+        if (err) throw err;
         else {
           res.sendStatus(200);
         }
