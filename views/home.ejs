@@ -63,22 +63,25 @@
       <div class="container d-flex justify-content-center align-items-center my-auto">
         <section class="card px-0">
           <div style="width: 90%" class="row px-0 mx-auto">
-            <span class="col-4 my-4 text-center">إسم العملة</span>
-            <span class="col-4 my-4 text-center">سعر العملة</span>
-            <span class="col-4 my-4 text-center mb-3">رصيد العملة</span>
+            <span class="col-3 my-3 text-center">إسم العملة</span>
+            <span class="col-3 my-3 text-center">سعر العملة</span>
+            <span class="col-3 my-3 text-center">كمية العملة</span>
+            <span class="col-3 my-3 text-center mb-3">رصيد العملة</span>
           <% if(currentUser.username != 'omair') { %> 
             <% for(let obj of coinsArray) { %>
-              <hr style="width: 90%;" class="mx-auto">
-              <span class="col-4 px-0 mb-3 text-center"><%= `${obj['coinName']}` %></span>
-              <span class="col-4 px-0 mb-3 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(3)}$` %></span>
-              <span class="col-4 px-0 mb-3 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
+              <hr class="mx-auto" style="width: 95%;">
+              <span class="col-3 px-0 mb-2 text-center"><%= `${obj['coinName']}` %></span>
+              <span class="col-3 px-0 mb-2 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(2)}$` %></span>
+              <span class="col-3 px-0 mb-2 text-center"><%= `${parseFloat(obj['coinAmount']  * (currentUser.percentage / 100)).toFixed(2)}` %></span>
+              <span class="col-3 px-0 mb-3 text-center"><%= `${(obj['coinBalance'] * (currentUser.percentage / 100)).toFixed(2)}$` %></span>
             <% } %> 
           <% } else { %>
             <% for(let obj of coinsArray) { %>
-              <hr style="width: 90%;" class="mx-auto">
-              <span class="col-4 px-0 mb-3 text-center"><%= `${obj['coinName']}` %></span>
-              <span class="col-4 px-0 mb-3 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(3)}$` %></span>
-              <span class="col-4 px-0 mb-3 text-center"><%= `${(obj['coinBalance']).toFixed(2)}$` %></span>
+              <hr class="mx-auto" style="width: 95%;">
+              <span class="col-3 px-0 mb-2 text-center"><%= `${obj['coinName']}` %></span>
+              <span class="col-3 px-0 mb-2 text-center"><%= `${parseFloat(obj['coinPrice']).toFixed(2)}$` %></span>
+              <span class="col-3 px-0 mb-2 text-center"><%= `${parseFloat(obj['coinAmount']).toFixed(2)}` %></span>
+              <span class="col-3 px-0 mb-3 text-center"><%= `${parseFloat(obj['coinBalance']).toFixed(2)}$` %></span>
             <% } %> 
           <% } %> 
           </div> 

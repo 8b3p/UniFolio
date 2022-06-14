@@ -1,4 +1,3 @@
-const StakedCoins = require('../models/stakedCoins');
 const Binance = require('node-binance-api');
 const binance = new Binance().options({
   APIKEY: process.env.BINANCE_APIKEY,
@@ -13,13 +12,14 @@ module.exports.getBalance = async (coins, coinsArray) => {
   for (let coin of coins.coin) {
     let coinusdt = `${coin}USDT`;
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
-    money = money * ticker[coinusdt];
+    calculatedBalance = money * ticker[coinusdt];
     // console.log(`${coin}: ${money}`);
-    total = total + money;
+    total = total + calculatedBalance;
     let coinData = {
       coinName: coin,
-      coinBalance: money,
-      coinPrice: ticker[coinusdt]
+      coinBalance: calculatedBalance,
+      coinPrice: ticker[coinusdt],
+      coinAmount: money
     };
     coinsArray.push(coinData);
   };
@@ -27,16 +27,19 @@ module.exports.getBalance = async (coins, coinsArray) => {
     let coin = 'USDT';
     let coinusdt = `${coin}DAI`;
     let money = (parseFloat(balances[coin].available) + parseFloat(balances[coin].onOrder));
-    money = money * ticker[coinusdt];
+    calculatedBalance = money * ticker[coinusdt];
     // console.log(`${coin}: ${money}`);
     total = total + money;
     let coinData = {
       coinName: coin,
       coinBalance: money,
-      coinPrice: ticker[coinusdt]
+      coinPrice: ticker[coinusdt],
+      coinAmount: money
     };
     coinsArray.push(coinData);
   }
   // console.log('got binance balance: ' + total);
+  console.log(total.toFixed(3).toString() + " Binance")
+
   return [total, coinsArray];
 };

@@ -37,23 +37,33 @@ module.exports.getBalance = async (coinsArray) => {
 
   for (let coin of Balance.data) {
     for (let data of prices.data.ticker) {
-      if (data.symbol == (coin.currency + '-USDT')) {
+      if (data.symbol === (coin.currency + '-USDT')) {
         let calculatedBalance = data.last * coin.balance;
         coinsArray.push({
           coinName: coin.currency,
           coinBalance: calculatedBalance,
-          coinPrice: data.last
-        })
+          coinPrice: data.last,
+          coinAmount: coin.balance
+        });
         total += parseFloat(calculatedBalance);
         break;
       }
-      if (data.symbol === coin.currency + '-UST') {
-        let calculatedBalance = coin.balance;
+      if (data.symbol === coin.currency + '-USDC') {
+        // let calculatedBalance = coin.balance;
+        // total += parseFloat(calculatedBalance);
+        let calculatedBalance = data.last * coin.balance;
+        coinsArray.push({
+          coinName: coin.currency,
+          coinBalance: calculatedBalance,
+          coinPrice: data.last,
+          coinAmount: data.balance
+        });
         total += parseFloat(calculatedBalance);
       }
     }
   }
   // console.log('got Kucoin balance: ' + total)
   // console.log(coinsArray)
+  console.log(total.toFixed(3).toString() + " Kucoin")
   return [total, coinsArray];
 };
