@@ -1,60 +1,61 @@
 if (process.env.NODE_ENV !== "production") {
-  require('dotenv').config();
-};
-const passport = require('passport');
-const localPassport = require('passport-local');
-const CoinUser = require('./models/user');
-const session = require('express-session');
-const mongoStore = require('connect-mongo');
-const express = require('express');
+  require("dotenv").config();
+}
+const passport = require("passport");
+const localPassport = require("passport-local");
+const CoinUser = require("./models/user");
+const session = require("express-session");
+const mongoStore = require("connect-mongo");
+const express = require("express");
 const app = express();
-const catchAsync = require('./utility/catchAsync.js');
-const controllers = require('./controller/controllers.js');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
-const path = require('path');
-const { isLoggedIn } = require('./utility/functions');
+const catchAsync = require("./utility/catchAsync.js");
+const controllers = require("./controller/controllers.js");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const path = require("path");
+const { isLoggedIn } = require("./utility/functions");
 
 const mongoDbUrl = process.env.MONGO_URL;
-mongoose.connect(mongoDbUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose
+  .connect(mongoDbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
-    console.log('mongoose connected to mongoDB succesfully');
+    console.log("mongoose connected to mongoDB succesfully");
   })
   .catch(err => {
-    console.error('oh no, mongoose error');
+    console.error("oh no, mongoose error");
     console.log(err);
   });
 
-app.use(morgan('tiny'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(morgan("tiny"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 const store = mongoStore.create({
   mongoUrl: mongoDbUrl,
   secret: process.env.SECRET,
-  touchAfter: 24 * 60 * 60
+  touchAfter: 24 * 60 * 60,
 });
 store.on("error", function (e) {
-  console.log('session store error', e);
+  console.log("session store error", e);
 });
 
 const sessionConfig = {
   store,
-  name: 'thisIsNotTheSessionSid',
-  secret: process.env.SECRET || 'mySecret',
+  name: "thisIsNotTheSessionSid",
+  secret: process.env.SECRET || "mySecret",
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7
-  }
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
 };
 app.use(session(sessionConfig));
 
@@ -65,63 +66,77 @@ passport.use(new localPassport(CoinUser.authenticate()));
 passport.serializeUser(CoinUser.serializeUser());
 passport.deserializeUser(CoinUser.deserializeUser());
 
-app.use(catchAsync(async (req, res, next) => {
-  if (req.user) {
-    if (req.user.commissionto.length) {
-      res.locals.commissioned = await CoinUser.find({
-        '_id': req.user.commissionto
-      });
-    } else {
-      res.locals.commissioned = null;
+app.use(
+  catchAsync(async (req, res, next) => {
+    if (req.user) {
+      if (req.user.commissionto.length) {
+        res.locals.commissioned = await CoinUser.find({
+          _id: req.user.commissionto,
+        });
+      } else {
+        res.locals.commissioned = null;
+      }
+      res.locals.currentUser = req.user;
     }
-    res.locals.currentUser = req.user;
-  }
-  next();
-}));
+    next();
+  })
+);
 
-app.get('/', isLoggedIn, catchAsync(controllers.renderHomePage));
+app.get("/", isLoggedIn, catchAsync(controllers.renderHomePage));
 
-
-app.get('/login', (req, res) => {
-  res.render('login');
+app.get("/login", (req, res) => {
+  res.render("login");
 });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('/');
-});
-
-app.post('/api/login', (req, res, next) => {
+app.post("/login", (req, res) => {
+  console.log("login post request");
   passport.authenticate("local", (err, user, info) => {
     if (err) throw err;
-    if (!user) res.send('no user found')
+    if (user.disabled) {
+      res.redirect("/login");
+    } else {
+      req.login(user, err => {
+        if (err) throw err;
+        else {
+          res.redirect("/");
+        }
+      });
+    }
+  })(req, res);
+});
+
+app.post("/api/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) throw err;
+    if (!user && user.disabled) res.send("no user found");
     else {
-      req.login(user, (err) => {
+      req.login(user, err => {
         if (err) throw err;
         else {
           res.sendStatus(200);
         }
-      })
+      });
     }
   })(req, res, next);
-})
+});
 
-app.post('/register', catchAsync(controllers.register));
+app.post("/register", catchAsync(controllers.register));
 
-app.get('/logout', (req, res) => {
+app.get("/logout", (req, res) => {
   req.logout();
-  res.redirect('/login');
-})
+  res.redirect("/login");
+});
 
-app.get('/api', catchAsync(controllers.API));
+app.get("/api", catchAsync(controllers.API));
 
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
-  if (!err.message) err.message = 'oh no, something went wrong';
-  console.log(err)
-  res.status(statusCode).render('error', { err });
+  if (!err.message) err.message = "oh no, something went wrong";
+  console.log(err);
+  res.status(statusCode).render("error", { err });
 });
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`online on port ${port}`);
 });

@@ -1,26 +1,32 @@
-const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose')
+const mongoose = require("mongoose");
+const passportLocalMongoose = require("passport-local-mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
   capital: {
     type: Number,
-    required: true
+    required: true,
   },
   percentage: {
     type: Number,
-    required: true
+    required: true,
   },
   profit: {
     type: Number,
-    required: true
+    required: true,
   },
-  commissionto: [{
-    type: Schema.Types.ObjectId,
-    ref: 'CoinsUser'
-  }]
+  commissionto: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "CoinsUser",
+    },
+  ],
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('CoinsUser', UserSchema);
+module.exports = mongoose.model("CoinsUser", UserSchema);
