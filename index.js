@@ -1,6 +1,4 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+if (process.env.NODE_ENV !== "production") { require("dotenv").config(); }
 const passport = require("passport");
 const localPassport = require("passport-local");
 const CoinUser = require("./models/user");
@@ -41,7 +39,7 @@ const store = mongoStore.create({
   secret: process.env.SECRET,
   touchAfter: 24 * 60 * 60,
 });
-store.on("error", function (e) {
+store.on("error", function(e) {
   console.log("session store error", e);
 });
 
@@ -132,7 +130,7 @@ app.get("/api", catchAsync(controllers.API));
 app.use((err, req, res, next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "oh no, something went wrong";
-  console.log(err);
+  console.dir(err);
   res.status(statusCode).render("error", { err });
 });
 
