@@ -6,6 +6,7 @@ const apiPassphrase = process.env.KUCOIN_PASSPHRASE;
 const url = 'https://api.kucoin.com';
 const MarketEndPoint = '/api/v1/market/allTickers';
 const BalanceEndPoint = '/api/v1/accounts';
+console.log(apiKey, apiSecret, apiPassphrase)
 
 module.exports.getBalance = async (coinsArray) => {
   const now = Date.now();
@@ -31,39 +32,48 @@ module.exports.getBalance = async (coinsArray) => {
     uri: url + MarketEndPoint,
     json: true
   }
-  const data = await Promise.all([rp(balanceRP), rp(marketRP)]);
-  const Balance = data[0];
-  const prices = data[1];
+  try {
+    const data = await Promise.all([rp(balanceRP), rp(marketRP)]);
+    const Balance = data[0];
+    const prices = data[1];
 
-  for (let coin of Balance.data) {
-    for (let data of prices.data.ticker) {
-      if (data.symbol === (coin.currency + '-USDT')) {
-        let calculatedBalance = data.last * coin.balance;
-        coinsArray.push({
-          coinName: coin.currency,
-          coinBalance: calculatedBalance,
-          coinPrice: data.last,
-          coinAmount: coin.balance
-        });
-        total += parseFloat(calculatedBalance);
-        break;
-      }
-      if (data.symbol === coin.currency + '-USDC') {
-        // let calculatedBalance = coin.balance;
-        // total += parseFloat(calculatedBalance);
-        let calculatedBalance = data.last * coin.balance;
-        coinsArray.push({
-          coinName: coin.currency,
-          coinBalance: calculatedBalance,
-          coinPrice: data.last,
-          coinAmount: data.balance
-        });
-        total += parseFloat(calculatedBalance);
+    for (let coin of Balance.data) {
+      for (let data of prices.data.ticker) {
+        if (data.symbol === (coin.currency + '-USDT')) {
+          let calculatedBalance = data.last * coin.balance;
+          if (!coinsArray[coin.currency]) {
+            coinsArray[coin.currency] = {
+              coinName: coin.currency,
+              coinBalance: calculatedBalance,
+              coinPrice: data.last,
+              coinAmount: coin.balance
+            };
+            total += parseFloat(calculatedBalance);
+            console.log('adding', data.symbol, 'of', calculatedBalance, 'to total')
+          }
+          break;
+        }
+        if (data.symbol === coin.currency + '-USDC') {
+          // let calculatedBalance = coin.balance;
+          // total += parseFloat(calculatedBalance);
+          let calculatedBalance = data.last * coin.balance;
+          if (!coinsArray[coin.currency]) {
+            coinsArray[coin.currency] = {
+              coinName: coin.currency,
+              coinBalance: calculatedBalance,
+              coinPrice: data.last,
+              coinAmount: coin.balance
+            };
+          }
+          console.log('adding', data.symbol, 'of', calculatedBalance, 'to total')
+          total += parseFloat(calculatedBalance);
+        }
       }
     }
+    console.log(total.toFixed(3).toString() + " Kucoin")
+    return [total, coinsArray];
+  } catch (err) {
+    console.log(err.message)
+    console.log('in catch of Kucoin')
   }
-  // console.log('got Kucoin balance: ' + total)
-  // console.log(coinsArray)
-  console.log(total.toFixed(3).toString() + " Kucoin")
-  return [total, coinsArray];
 };
