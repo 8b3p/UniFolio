@@ -1,9 +1,8 @@
 if (process.env.NODE_ENV !== "production") { require("dotenv").config(); }
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 const localPassport = require("passport-local");
 const CoinUser = require("./models/user");
-const session = require("express-session");
-const mongoStore = require("connect-mongo");
 const express = require("express");
 const app = express();
 const catchAsync = require("./utility/catchAsync.js");
@@ -11,21 +10,14 @@ const controllers = require("./controller/controllers.js");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const path = require("path");
+const cookieParser = require("cookie-parser");
 const { isLoggedIn } = require("./utility/functions");
 
 const mongoDbUrl = process.env.MONGO_URL;
 mongoose
-  .connect(mongoDbUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("mongoose connected to mongoDB succesfully");
-  })
-  .catch(err => {
-    console.error("oh no, mongoose error");
-    console.log(err);
-  });
+  .connect(mongoDbUrl, { useNewUrlParser: true, useUnifiedTopology: true, })
+  .then(() => console.log("mongoose connected to mongoDB succesfully"))
+  .catch(err => console.error("oh no, mongoose error", err));
 
 app.use(morgan("tiny"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -34,35 +26,57 @@ app.use(express.json());
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-const store = mongoStore.create({
-  mongoUrl: mongoDbUrl,
-  secret: process.env.SECRET,
-  touchAfter: 24 * 60 * 60,
-});
-store.on("error", function(e) {
-  console.log("session store error", e);
-});
-
-const sessionConfig = {
-  store,
-  name: "thisIsNotTheSessionSid",
-  secret: process.env.SECRET || "mySecret",
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  },
-};
-app.use(session(sessionConfig));
-
 //all these are for the passport package for the password falan
 app.use(passport.initialize());
-app.use(passport.session());
 passport.use(new localPassport(CoinUser.authenticate()));
-passport.serializeUser(CoinUser.serializeUser());
-passport.deserializeUser(CoinUser.deserializeUser());
+
+app.use(cookieParser());
+
+app.get("/login", (_req, res) => {
+  res.render("login");
+})
+
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", async (err, user, info) => {
+    const COOKIE_NAME = "auth_token";
+    const SECRET = process.env.JWT_SECRET || "please_change_me";
+    if (err) return next(err);
+    if (!user || user.disabled) return res.status(401).send("Unauthorized");
+
+    const token = jwt.sign({ id: user._id }, SECRET, { expiresIn: "7d" });
+
+    res.cookie(COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    res.redirect("/");
+  })(req, res, next);
+});
+
+app.post("/api/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, _info) => {
+    if (err) throw err;
+    if (!user || user.disabled) res.send("no user found");
+    else {
+      req.login(user, err => {
+        if (err) throw err;
+        else res.sendStatus(200);
+      });
+    }
+  })(req, res, next);
+});
+
+app.post("/register", catchAsync(controllers.register));
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("auth_token");
+  res.redirect("/login");
+});
+
+app.use(isLoggedIn);
 
 app.use(
   catchAsync(async (req, res, next) => {
@@ -80,54 +94,12 @@ app.use(
   })
 );
 
-app.get("/", isLoggedIn, catchAsync(controllers.renderHomePage));
+app.get("/", catchAsync(controllers.renderHomePage));
 
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.post("/login", (req, res) => {
-  console.log("login post request");
-  passport.authenticate("local", (err, user, info) => {
-    if (err) throw err;
-    if (user.disabled) {
-      res.redirect("/login");
-    } else {
-      req.login(user, err => {
-        if (err) throw err;
-        else {
-          res.redirect("/");
-        }
-      });
-    }
-  })(req, res);
-});
-
-app.post("/api/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) throw err;
-    if (!user && user.disabled) res.send("no user found");
-    else {
-      req.login(user, err => {
-        if (err) throw err;
-        else {
-          res.sendStatus(200);
-        }
-      });
-    }
-  })(req, res, next);
-});
-
-app.post("/register", catchAsync(controllers.register));
-
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/login");
-});
 
 app.get("/api", catchAsync(controllers.API));
 
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   const { statusCode = 500 } = err;
   if (!err.message) err.message = "oh no, something went wrong";
   console.dir(err);
