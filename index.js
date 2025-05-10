@@ -41,6 +41,7 @@ app.post("/login", (req, res, next) => {
     const COOKIE_NAME = "auth_token";
     const SECRET = process.env.JWT_SECRET || "please_change_me";
     if (err) return next(err);
+    console.log("user", user);
     if (!user || user.disabled) return res.status(401).send("Unauthorized");
 
     const token = jwt.sign({ id: user._id }, SECRET, { expiresIn: "7d" });
