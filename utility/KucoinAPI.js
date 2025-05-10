@@ -33,6 +33,8 @@ module.exports.getBalance = async (coinsArray) => {
     json: true
   }
   try {
+    console.log("balanceRP", balanceRP)
+    console.log("marketRP", marketRP)
     const data = await Promise.all([rp(balanceRP), rp(marketRP)]);
     console.log("data", data)
     const Balance = data[0];
